@@ -1,0 +1,18 @@
+# Render service template - fill placeholders after creating a service
+services:
+  - type: web
+    name: task-manager-backend
+    env: docker
+    plan: starter
+    repo: <YOUR_GITHUB_REPO_URL>
+    branch: main
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        value: <REPLACE_WITH_DATABASE_URL>
+      - key: JWT_SECRET
+        value: <REPLACE_WITH_JWT_SECRET>
+      - key: FRONTEND_URL
+        value: <REPLACE_WITH_FRONTEND_URL>
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm run start
