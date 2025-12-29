@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 // Use localhost for server-side proxying to ensure connectivity, fallback to env var
-const API_BASE = 'http://127.0.0.1:5001';
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5001';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;

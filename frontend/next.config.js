@@ -7,6 +7,14 @@ const nextConfig = {
     root: __dirname,
   },
   // No experimental options needed for this dev setup
+  async rewrites() {
+    return [
+      {
+        source: '/socket.io/:path*',
+        destination: 'http://localhost:5001/socket.io/:path*',
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

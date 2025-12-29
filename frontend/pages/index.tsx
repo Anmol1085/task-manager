@@ -40,7 +40,7 @@ export default function Home() {
   }, [data]);
 
   useEffect(() => {
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || `http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:5001`;
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || undefined;
     const newSocket = io(socketUrl);
     // eslint-disable-next-line
     setSocket(newSocket);

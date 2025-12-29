@@ -11,7 +11,7 @@ export const config = {
 };
 
 // Use localhost for server-side proxying to ensure connectivity
-const API_BASE = 'http://127.0.0.1:5001';
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5001';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') return res.status(405).end();

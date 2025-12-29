@@ -20,7 +20,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [process.env.FRONTEND_URL || "http://localhost:3000", "http://10.20.9.181:3000"],
+    origin: "*", // Allow all origins for development
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
@@ -37,13 +37,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true, // Allow all origins for development/tunneling
   credentials: true
 }));
 app.use(cookieParser());
