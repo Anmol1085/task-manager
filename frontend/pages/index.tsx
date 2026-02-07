@@ -18,6 +18,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'board'>('list');
   const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   const { data, refetch, isLoading } = useQuery<Task[]>({
     queryKey: ['tasks'],
@@ -26,6 +27,7 @@ export default function Home() {
       if (!res.ok) return [];
       return res.json();
     },
+    enabled: !!currentUser, // Only fetch tasks when user is authenticated
   });
 
   useEffect(() => {
@@ -60,16 +62,25 @@ export default function Home() {
 
   // fetch current user and tell socket to join room
   useEffect(() => {
+    let mounted = true;
     (async () => {
-      const res = await fetch('/api/auth/me', { credentials: 'include' });
-      if (res.ok) {
-        const user = await res.json();
-        setCurrentUser(user);
-        if (socket && user?.id) socket.emit('join', user.id);
-      } else {
-        router.push('/login');
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        if (res.ok) {
+          const user = await res.json();
+          if (mounted) {
+            setCurrentUser(user);
+            setIsAuthChecking(false);
+            if (socket && user?.id) socket.emit('join', user.id);
+          }
+        } else {
+          if (mounted) router.push('/login');
+        }
+      } catch (error) {
+        if (mounted) router.push('/login');
       }
     })();
+    return () => { mounted = false; };
   }, [socket, router]);
 
   const handleTaskUpdate = () => {
@@ -80,6 +91,14 @@ export default function Home() {
     t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     t.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0d1117]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
